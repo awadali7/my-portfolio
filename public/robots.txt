@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://awad.id
+
+# Sitemaps
+Sitemap: https://awad.id/sitemap.xml
