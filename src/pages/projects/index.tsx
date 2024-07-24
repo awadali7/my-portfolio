@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import Container from '@/common/components/elements/Container';
 import PageHeading from '@/common/components/elements/PageHeading';
-import prisma from '@/common/libs/prisma';
+// import prisma from '@/common/libs/prisma';
 import { ProjectItemProps } from '@/common/types/projects';
 import Projects from '@/modules/projects';
 
