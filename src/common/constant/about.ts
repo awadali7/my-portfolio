@@ -3,19 +3,16 @@ export const ABOUT = `
     Hello! Thanks for stopping by my personal website.
 </p>
 <p>
-    I'm Awad. With 3 years of experience in web development, I specialize in both the coding you see on the screen (frontend) and the stuff that happens behind the scenes (backend). I know how to manage projects using methods like Waterfall and Agile. But what really gets me excited is making websites and apps that are easy for everyone to use and look good too!
+    I'm Awad Ali, a passionate full-stack developer based in Kochi, India, with 4+ years of experience building efficient, scalable, and user-friendly web applications. I specialize in creating visually appealing and intuitive web experiences, with a keen eye for design and strong attention to detail across both frontend and backend.
 </p>
 <p>
-    I'm really into JavaScript and PHP, which are languages used to build websites. I also know a bunch of frameworks that make building websites even easier, like React, Vue, Angular, Node.js, and PHP frameworks like Codeigniter and Laravel. I love learning about new web tools and features.
+    I've had the opportunity to grow through diverse roles — from Software Engineer at Steyp, where I led a team of 11 and drove a 50% revenue surge for their e-learning platform, to Chief Technology Officer at Arwa World, where I led the full technology strategy delivering premium web solutions for clients across Dubai. I'm currently working as a Software Engineer at SFO Technologies, building advanced employee tracking and freight management systems.
 </p>
 <p>
-    In my career, I've led teams to build software for a wide range of companies, from large corporations to innovative startups.
+    On the frontend, I work primarily with React, Next.js, Angular, and Vue.js paired with Tailwind CSS and SCSS. On the backend, I build APIs and services with Node.js, Express, and Django (Python). My databases of choice are PostgreSQL, MongoDB, MySQL, and Firebase, and I'm comfortable with cloud and DevOps workflows on AWS.
 </p>
 <p>
-    I believe that good communication is super important in any job.
-</p>
-<p>
-    I'm good at adapting to different situations, working efficiently, and always trying to do my best. My experience has taught me how to solve problems and lead teams, but I'm also happy to work with others to get things done. I'm excited about the chance to work together and make cool stuff!
+    I believe great software is built through collaboration, clear communication, and continuous learning. I'm always exploring new tools and frameworks to stay at the cutting edge.
 </p>
 <p>
     I'm looking forward to the possibility of working with you!
