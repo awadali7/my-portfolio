@@ -1,17 +1,17 @@
 <div align="center">
-  <h1>awad.id</h1>
+  <h1>awadali.com</h1>
   <p>🔥 Personal website was built originally from scratch using Next.js, TypeScript, Tailwind CSS, SWR, Firebase and Prisma with PostgreSQL</p>
 
-[![GitHub Repo stars](https://img.shields.io/github/stars/awad/awad.id)](https://github.com/awad/awad.id/stargazers)
+[![GitHub Repo stars](https://img.shields.io/github/stars/awad/awadali.com)](https://github.com/awad/awadali.com/stargazers)
 [![Depfu](https://badges.depfu.com/badges/02483ebb21fdb2182a66a28b68d1b7b0/status.svg)](https://depfu.com)
-[![Depfu](https://badges.depfu.com/badges/02483ebb21fdb2182a66a28b68d1b7b0/overview.svg)](https://depfu.com/github/awad/awad.id?project_id=38809)
-[![Depfu](https://badges.depfu.com/badges/02483ebb21fdb2182a66a28b68d1b7b0/count.svg)](https://depfu.com/github/awad/awad.id?project_id=38809)
+[![Depfu](https://badges.depfu.com/badges/02483ebb21fdb2182a66a28b68d1b7b0/overview.svg)](https://depfu.com/github/awad/awadali.com?project_id=38809)
+[![Depfu](https://badges.depfu.com/badges/02483ebb21fdb2182a66a28b68d1b7b0/count.svg)](https://depfu.com/github/awad/awadali.com?project_id=38809)
 [![Last Update](https://img.shields.io/badge/deps%20update-every%20sunday-blue.svg)](https://shields.io/)
 
 </div>
 <br />
 
-<img width="1359" alt="image" src="https://github.com/awad/awad.id/assets/15605885/e9665038-6e84-4c8e-a847-fb90138c0303">
+<img width="1359" alt="image" src="https://github.com/awad/awadali.com/assets/15605885/e9665038-6e84-4c8e-a847-fb90138c0303">
 
 ## Introduction
 
@@ -88,13 +88,13 @@ The data projects on this blog are taken from the PostgreSQL database connected 
 
 Report URL: https://pagespeed.web.dev/analysis/https-awad-id/pk0y6xcz25?form_factor=desktop
 
-![image](https://github.com/awad/awad.id/assets/15605885/d87a6083-caf3-4b84-ba59-975c07193a9f)
+![image](https://github.com/awad/awadali.com/assets/15605885/d87a6083-caf3-4b84-ba59-975c07193a9f)
 
 - ### GTmetrix
 
-Report URL: [https://pagespeed.web.dev/analysis/https-awad-id/pk0y6xcz25?form_factor=desktop](https://gtmetrix.com/reports/awad.id/REEiduoo/)
+Report URL: [https://pagespeed.web.dev/analysis/https-awad-id/pk0y6xcz25?form_factor=desktop](https://gtmetrix.com/reports/awadali.com/REEiduoo/)
 
-![image](https://github.com/awad/awad.id/assets/15605885/953dc131-bf52-4ef6-913c-f6eb8fb6c6a7)
+![image](https://github.com/awad/awadali.com/assets/15605885/953dc131-bf52-4ef6-913c-f6eb8fb6c6a7)
 <br /><br />
 
 ## Getting Started
@@ -106,25 +106,25 @@ If you are interested in running this project on your local machine, you can do 
 1. Clone using git
 
    ```bash
-   git clone https://github.com/awad/awad.id
+   git clone https://github.com/awad/awadali.com
    ```
 
 2. Using `create-next-app`
 
    ```bash
-   npx create-next-app -e https://github.com/awad/awad.id project-name
+   npx create-next-app -e https://github.com/awad/awadali.com project-name
    ```
 
 3. Using `degit`
 
    ```bash
-   npx degit awad/awad.id YOUR_APP_NAME
+   npx degit awad/awadali.com YOUR_APP_NAME
    ```
 
 4. Deploy to Vercel or Netlify, etc
 
-   [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/awad/awad.id)
-   [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/awad/awad.id)
+   [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/awad/awadali.com)
+   [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/awad/awadali.com)
 
 ### 2. Install dependencies
 
@@ -140,7 +140,7 @@ This repository uses several environment variables. Please copy .env.example int
 
 ```
 BUNDLE_ANALYZER=false
-SITE_URL=https://awad.id
+SITE_URL=https://awadali.com
 
 # Blog
 BLOG_API_URL=
@@ -199,4 +199,4 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## License
 
-Licensed under the [GPL-3.0 license](https://github.com/awad/awad.id/blob/master/LICENSE).
+Licensed under the [GPL-3.0 license](https://github.com/awad/awadali.com/blob/master/LICENSE).

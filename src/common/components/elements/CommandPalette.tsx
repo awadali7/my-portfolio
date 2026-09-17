@@ -129,7 +129,7 @@ const CommandPalette = () => {
 
   const handleFindGoogle = () => {
     const url =
-      'https://www.google.com/search?q=' + queryDebounce + '&ref=awad.id';
+      'https://www.google.com/search?q=' + queryDebounce + '&ref=awadali.com';
     window.open(url, '_blank');
   };
 

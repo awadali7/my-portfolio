@@ -7,7 +7,7 @@ const Copyright = () => {
       <span className='animate-pulse text-red-500'>❤</span>
       <span>by</span>
       <a
-        href='http://github.com/awad/awad.id'
+        href='http://github.com/awad/awadali.com'
         target='_blank'
         rel='noopener noreferrer'
       >
