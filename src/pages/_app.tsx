@@ -1,6 +1,7 @@
 import AOS from 'aos';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
+import Head from 'next/head';
 import { SessionProvider } from 'next-auth/react';
 import { DefaultSeo } from 'next-seo';
 import { ThemeProvider } from 'next-themes';
@@ -20,7 +21,7 @@ import { CommandPaletteProvider } from '@/common/context/CommandPaletteContext';
 //   soraSans,
 // } from '@/common/styles/fonts';
 
-import defaultSEOConfig from '../../next-seo.config';
+import defaultSEOConfig, { personJsonLd } from '../../next-seo.config';
 
 const ProgressBar = dynamic(
   () => import('src/common/components/elements/ProgressBar'),
@@ -48,6 +49,12 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
         `}
       </style> */}
       <DefaultSeo {...defaultSEOConfig} />
+      <Head>
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
+      </Head>
       <SessionProvider session={session}>
         <ThemeProvider attribute='class' defaultTheme='dark'>
           <CommandPaletteProvider>

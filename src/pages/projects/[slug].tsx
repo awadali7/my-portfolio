@@ -13,7 +13,7 @@ interface ProjectsDetailPageProps {
 }
 
 const ProjectsDetailPage: NextPage<ProjectsDetailPageProps> = ({ project }) => {
-  const canonicalUrl = `https://awad.id/projects/${project?.slug}`;
+  const canonicalUrl = `https://www.awadali.com/projects/${project?.slug}`;
 
   return (
     <>

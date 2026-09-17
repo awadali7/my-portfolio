@@ -54,7 +54,7 @@ export const MENU_ITEMS: MenuItemProps[] = [
     title: 'Blog',
     href: '/blog',
     icon: <BlogIcon size={iconSize} />,
-    isShow: true,
+    isShow: false,
     isExternal: false,
     eventName: 'Pages: Blog',
     type: 'Pages',
@@ -63,7 +63,7 @@ export const MENU_ITEMS: MenuItemProps[] = [
     title: 'Learn',
     href: '/learn',
     icon: <LearnIcon size={iconSize} />,
-    isShow: true,
+    isShow: false,
     isExternal: false,
     eventName: 'Pages: Learn',
     type: 'Pages',
@@ -166,7 +166,7 @@ export const SOCIAL_MEDIA: MenuItemProps[] = [
 export const EXTERNAL_LINKS: MenuItemProps[] = [
   {
     title: 'Analytics',
-    href: 'https://analytics.awad.com/share/LK5kiRuosw9pORLa/awad.id',
+    href: 'https://analytics.awad.com/share/LK5kiRuosw9pORLa/awadali.com',
     icon: <AnalyticsIcon size={iconSize} />,
     isShow: true,
     isExternal: true,

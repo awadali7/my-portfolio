@@ -40,20 +40,20 @@ const LinkedInCard = () => {
             <span className='text-xs text-neutral-400'>He/Him</span>
           </div>
           <p className='mt-1 text-[13px] leading-relaxed text-neutral-500 dark:text-neutral-400'>
-            Senior Full Stack Engineer · Next.js · Node.js · Django · .NET
+            Software Engineer · Next.js · Node.js · Django · .NET
           </p>
         </div>
 
         <div className='flex items-center gap-1.5 text-[13px] text-neutral-500 dark:text-neutral-400'>
           <LocationIcon size={14} className='shrink-0' />
-          <span>Dubai, United Arab Emirates</span>
+          <span>Kochi, Kerala, India</span>
         </div>
 
         {/* Open to Work badge */}
         <div className='flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 dark:bg-green-900/20'>
           <WorkIcon size={14} className='text-green-600 dark:text-green-400' />
           <span className='text-[13px] font-medium text-green-700 dark:text-green-400'>
-            Open to Work · Available Immediately
+            Open to relocate · Dubai, UAE
           </span>
         </div>
 
