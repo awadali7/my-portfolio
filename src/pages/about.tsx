@@ -7,7 +7,7 @@ import About from '@/modules/about';
 
 const PAGE_TITLE = 'About';
 const PAGE_DESCRIPTION =
-  'An insightful glimpse into who I am – because every detail adds depth to the canvas of life.';
+  'Awad Ali – full stack software engineer from Kochi, Kerala. My story, career at SFO Technologies, Arwa World and Steyp, skills and education.';
 
 const AboutPage: NextPage = () => {
   return (

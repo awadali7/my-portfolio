@@ -1,15 +1,17 @@
 const canonicalUrl = 'https://www.awadali.com';
 const metaImage = `${canonicalUrl}/images/awad-ali.jpeg`;
+const metaTitle =
+  'Awad Ali – Full Stack Software Engineer & Next.js Developer, Kerala';
 const metaDescription =
-  'Seasoned Software Engineer especially in Frontend side, with a passion for creating pixel-perfect web experiences';
+  'Awad Ali is a full stack software engineer at SFO Technologies in Kochi, Kerala, building fast, scalable web apps with Next.js, React, Node.js and .NET.';
 
 const defaultSEOConfig = {
-  defaultTitle: 'Awad Ali - Personal Website',
+  defaultTitle: metaTitle,
   description: metaDescription,
   canonical: canonicalUrl,
   openGraph: {
     canonical: canonicalUrl,
-    title: 'Awad Ali - Personal Website',
+    title: metaTitle,
     description: metaDescription,
     type: 'website',
     images: [
@@ -22,6 +24,13 @@ const defaultSEOConfig = {
     ],
     site_name: 'awadali.com',
   },
+  additionalMetaTags: [
+    {
+      name: 'keywords',
+      content:
+        'Awad Ali, software engineer Kerala, software engineer Kochi, full stack developer Kerala, Next.js developer Kerala, React developer Kochi, SFO Technologies software engineer',
+    },
+  ],
   twitter: {
     handle: '@awadali91206435',
     site: '@awadali91206435',
@@ -35,7 +44,7 @@ export const personJsonLd = {
   name: 'Awad Ali',
   url: canonicalUrl,
   image: metaImage,
-  jobTitle: 'Software Engineer',
+  jobTitle: 'Full Stack Software Engineer',
   description: metaDescription,
   email: 'mailtoawadali@gmail.com',
   worksFor: {
@@ -56,6 +65,7 @@ export const personJsonLd = {
     'https://www.instagram.com/awadail.in',
   ],
   knowsAbout: [
+    'Full Stack Development',
     'JavaScript',
     'TypeScript',
     'React',
