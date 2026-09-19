@@ -5,6 +5,8 @@ import BackButton from '@/common/components/elements/BackButton';
 import Container from '@/common/components/elements/Container';
 import PageHeading from '@/common/components/elements/PageHeading';
 import { PROJECTS } from '@/common/constant/projects';
+import { getProjectPageSeo } from '@/common/constant/seo';
+import { absoluteUrl, buildSeo } from '@/common/libs/seo';
 import { ProjectItemProps } from '@/common/types/projects';
 import ProjectDetail from '@/modules/projects/components/ProjectDetail';
 
@@ -13,25 +15,21 @@ interface ProjectsDetailPageProps {
 }
 
 const ProjectsDetailPage: NextPage<ProjectsDetailPageProps> = ({ project }) => {
-  const canonicalUrl = `https://www.awadali.com/projects/${project?.slug}`;
-
   return (
     <>
       <NextSeo
-        title={`${project?.title} - Projects · Awad Ali`}
-        description={project?.description}
-        canonical={canonicalUrl}
-        openGraph={{
+        {...buildSeo({
+          ...getProjectPageSeo(project),
           type: 'article',
-          article: {
-            publishedTime: project?.updated_at.toString(),
-            modifiedTime: project?.updated_at.toString(),
-            authors: ['Awad Ali'],
+          image: {
+            url: project?.image,
+            alt: `Screenshot of the ${project?.title} project`,
           },
-          url: canonicalUrl,
-          images: [{ url: project?.image }],
-          siteName: 'Awad Ali',
-        }}
+          article: {
+            modifiedTime: new Date(project?.updated_at).toISOString(),
+            authors: [absoluteUrl('/about')],
+          },
+        })}
       />
       <Container data-aos='fade-up'>
         <BackButton url='/projects' />

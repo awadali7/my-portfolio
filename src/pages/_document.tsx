@@ -4,12 +4,8 @@ export default function Document() {
   return (
     <Html lang='en'>
       <Head>
-        <script
-          async
-          defer
-          src='https://analytics.awad.com/script.js'
-          data-website-id='5a78190a-bdad-48a4-901a-c7400be41ca6'
-        ></script>
+        {/* TODO(awad): add your own analytics script here. The previous one
+            loaded from analytics.awad.com, a domain this site doesn't own. */}
         <link
           rel='apple-touch-icon'
           sizes='180x180'

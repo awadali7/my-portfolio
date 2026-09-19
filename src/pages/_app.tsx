@@ -13,6 +13,7 @@ import '@/common/styles/globals.css';
 
 import CommandPalette from '@/common/components/elements/CommandPalette';
 import Layout from '@/common/components/layouts';
+import { DEFAULT_SEO, personJsonLd } from '@/common/constant/seo';
 import { CommandPaletteProvider } from '@/common/context/CommandPaletteContext';
 // import {
 //   firaCode,
@@ -20,8 +21,6 @@ import { CommandPaletteProvider } from '@/common/context/CommandPaletteContext';
 //   onestSans,
 //   soraSans,
 // } from '@/common/styles/fonts';
-
-import defaultSEOConfig, { personJsonLd } from '../../next-seo.config';
 
 const ProgressBar = dynamic(
   () => import('src/common/components/elements/ProgressBar'),
@@ -48,7 +47,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
           }
         `}
       </style> */}
-      <DefaultSeo {...defaultSEOConfig} />
+      <DefaultSeo {...DEFAULT_SEO} />
       <Head>
         <script
           type='application/ld+json'

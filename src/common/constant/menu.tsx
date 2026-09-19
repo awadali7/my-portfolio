@@ -10,7 +10,6 @@ import {
   FiBookOpen as LearnIcon,
   FiCoffee as ProjectIcon,
   FiCpu as DashboardIcon,
-  FiPieChart as AnalyticsIcon,
   FiPocket as HomeIcon,
   FiRss as BlogIcon,
   FiUser as ProfileIcon,
@@ -163,14 +162,5 @@ export const SOCIAL_MEDIA: MenuItemProps[] = [
   },
 ];
 
-export const EXTERNAL_LINKS: MenuItemProps[] = [
-  {
-    title: 'Analytics',
-    href: 'https://analytics.awad.com/share/LK5kiRuosw9pORLa/awadali.com',
-    icon: <AnalyticsIcon size={iconSize} />,
-    isShow: true,
-    isExternal: true,
-    eventName: 'External Link: Analytics',
-    type: 'Link',
-  },
-];
+// The Analytics link pointed at analytics.awad.com, which this site doesn't own.
+export const EXTERNAL_LINKS: MenuItemProps[] = [];
