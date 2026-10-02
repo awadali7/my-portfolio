@@ -1,7 +1,7 @@
 {
   "name": "Myyee",
   "short_name": "Myyee",
-  "description": "Household money — EMIs, income, expenses and borrowings.",
+  "description": "Household money \u2014 EMIs, income, expenses and borrowings.",
   "id": "/admin",
   "start_url": "/admin",
   "scope": "/admin",
@@ -17,15 +17,15 @@
       "purpose": "any"
     },
     {
-      "src": "/myyee/icon-512.png",
+      "src": "/myyee/icon-512.webp",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/webp",
       "purpose": "any"
     },
     {
-      "src": "/myyee/icon-maskable-512.png",
+      "src": "/myyee/icon-maskable-512.webp",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/webp",
       "purpose": "maskable"
     }
   ]
