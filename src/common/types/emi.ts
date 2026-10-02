@@ -21,6 +21,8 @@ export type EmiProps = {
   installmentsTotal: number | null;
   /** Count-down style chits (e.g. Pocketly) use this instead of paid/total. */
   installmentsLeft: number | null;
+  /** "YYYY-MM" of the first cycle billed. Null = already running. */
+  startCycle: string | null;
   /** "YYYY-MM" of the cycle last marked paid. */
   lastPaidCycle: string | null;
   archived: boolean;
@@ -36,6 +38,10 @@ export type EmiWithStatusProps = EmiProps & {
   isPaidThisCycle: boolean;
   /** Fully paid off — no instalments remain. */
   isClosed: boolean;
+  /** Starts in a later cycle than the one being viewed — not owed yet. */
+  isNotStarted: boolean;
+  /** "Starts Nov 2026" when it hasn't begun, otherwise null. */
+  startLabel: string | null;
   /** ISO date of this cycle's due date, or null when no due day is set. */
   dueDate: string | null;
   daysUntilDue: number | null;
@@ -53,14 +59,39 @@ export type EmiSummaryProps = {
   pendingTotal: number;
   activeCount: number;
   paidCount: number;
+  /** Not billed in this cycle yet — excluded from the month's totals. */
+  upcomingCount: number;
   overdueCount: number;
   /** Sum of every remaining instalment on closed-ended items. */
   remainingPayout: number;
 };
 
+/**
+ * A source of household income.
+ * `cycle` null = permanent (counts every month); set = one-off for that month.
+ */
+export type IncomeSourceProps = {
+  id: string;
+  label: string;
+  amount: number;
+  cycle: string | null;
+};
+
+/** What counts towards one month: permanent sources plus that month's one-offs. */
 export type IncomeProps = {
-  userSalary: number;
-  spouseSalary: number;
+  cycle: string;
+  permanent: IncomeSourceProps[];
+  monthly: IncomeSourceProps[];
+  permanentTotal: number;
+  monthlyTotal: number;
+  total: number;
+};
+
+export type IncomeFormValues = {
+  label: string;
+  amount: number | string;
+  /** '' = permanent, 'YYYY-MM' = only that month. */
+  cycle: string;
 };
 
 export type EmiFormValues = {
@@ -72,7 +103,7 @@ export type EmiFormValues = {
   endOfMonth: boolean;
   installmentsPaid: number | string;
   installmentsTotal: number | string;
-  installmentsLeft: number | string;
+  startCycle: string;
 };
 
 export type AdminProfileProps = {

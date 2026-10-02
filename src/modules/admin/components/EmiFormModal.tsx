@@ -22,7 +22,8 @@ type FormState = {
   /** Empty = this tracking style isn't in use. */
   installmentsPaid: string;
   installmentsTotal: string;
-  installmentsLeft: string;
+  /** "YYYY-MM" from a month input. Empty = already running. */
+  startCycle: string;
 };
 
 const EMPTY: FormState = {
@@ -34,7 +35,7 @@ const EMPTY: FormState = {
   endOfMonth: false,
   installmentsPaid: '',
   installmentsTotal: '',
-  installmentsLeft: '',
+  startCycle: '',
 };
 
 const toFormState = (emi: EmiProps | null): FormState =>
@@ -50,8 +51,7 @@ const toFormState = (emi: EmiProps | null): FormState =>
           emi.installmentsPaid == null ? '' : String(emi.installmentsPaid),
         installmentsTotal:
           emi.installmentsTotal == null ? '' : String(emi.installmentsTotal),
-        installmentsLeft:
-          emi.installmentsLeft == null ? '' : String(emi.installmentsLeft),
+        startCycle: emi.startCycle ?? '',
       }
     : EMPTY;
 
@@ -112,7 +112,15 @@ const EmiFormModal = ({
           endOfMonth: form.endOfMonth,
           installmentsPaid: toNullableInt(form.installmentsPaid),
           installmentsTotal: toNullableInt(form.installmentsTotal),
-          installmentsLeft: toNullableInt(form.installmentsLeft),
+          // Pocketly-style bills are still stored as "N left"; the form no
+          // longer edits that, so carry the stored value through rather than
+          // clearing it on an unrelated edit. Setting a total switches the
+          // bill to paid/total tracking, so the countdown is dropped then.
+          installmentsLeft:
+            toNullableInt(form.installmentsTotal) != null
+              ? null
+              : emi?.installmentsLeft ?? null,
+          startCycle: form.startCycle.trim() || null,
           // Preserved on edit so saving a field change doesn't silently
           // un-pay the current month.
           lastPaidCycle: emi?.lastPaidCycle ?? null,
@@ -223,9 +231,21 @@ const EmiFormModal = ({
           Due at end of month
         </label>
 
+        <label className={labelClass}>
+          <span className={labelText}>
+            Starts (leave blank if it is already running)
+          </span>
+          <input
+            className={inputClass}
+            type='month'
+            value={form.startCycle}
+            onChange={(event) => update('startCycle', event.target.value)}
+          />
+        </label>
+
         <fieldset className='space-y-3 rounded-lg border border-neutral-300 p-3 dark:border-neutral-800'>
           <legend className='px-1 text-xs text-neutral-600 dark:text-neutral-400'>
-            Progress — fill one style, leave the other blank
+            Progress — leave blank for open-ended bills like rent
           </legend>
 
           <div className='grid grid-cols-2 gap-3'>
@@ -256,22 +276,6 @@ const EmiFormModal = ({
               />
             </label>
           </div>
-
-          <label className={labelClass}>
-            <span className={labelText}>
-              …or instalments left (count-down style)
-            </span>
-            <input
-              className={inputClass}
-              type='number'
-              min={0}
-              value={form.installmentsLeft}
-              onChange={(event) =>
-                update('installmentsLeft', event.target.value)
-              }
-              placeholder='2'
-            />
-          </label>
         </fieldset>
 
         {error && (

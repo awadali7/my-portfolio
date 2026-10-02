@@ -21,7 +21,7 @@ const AdminPage: NextPage<AdminPageProps> = ({ admin, emis, income }) => (
   <>
     <NextSeo title='EMI Tracker' noindex nofollow />
     <Container>
-      <EmiTracker admin={admin} initialEmis={emis} income={income} />
+      <EmiTracker admin={admin} initialEmis={emis} initialIncome={income} />
     </Container>
   </>
 );
@@ -54,9 +54,7 @@ export const getServerSideProps: GetServerSideProps<AdminPageProps> = async ({
       props: {
         admin: JSON.parse(JSON.stringify(admin)) as AdminProfileProps,
         emis,
-        income: income
-          ? { userSalary: income.userSalary, spouseSalary: income.spouseSalary }
-          : null,
+        income,
       },
     };
   } catch {

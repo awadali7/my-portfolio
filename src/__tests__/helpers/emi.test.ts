@@ -22,6 +22,7 @@ const emi = (overrides: Partial<EmiProps> = {}): EmiProps => ({
   installmentsPaid: null,
   installmentsTotal: null,
   installmentsLeft: null,
+  startCycle: null,
   lastPaidCycle: null,
   archived: false,
   ...overrides,
@@ -218,5 +219,101 @@ describe('formatting', () => {
     expect(label(25)).toBe('Due in 3 days');
     expect(label(21)).toBe('1 day overdue');
     expect(label(1)).toBe('21 days overdue');
+  });
+});
+
+describe('startCycle', () => {
+  const today = new Date(2026, 8, 22); // 22 Sep 2026
+
+  it('marks a bill starting later as not started', () => {
+    const row = withStatus(
+      emi({ startCycle: '2026-11', dueDay: 5 }),
+      '2026-09',
+      today,
+    );
+    expect(row.isNotStarted).toBe(true);
+    expect(row.startLabel).toBe('Starts Nov 2026');
+  });
+
+  it('is started once the viewed cycle reaches the start', () => {
+    expect(
+      withStatus(emi({ startCycle: '2026-09' }), '2026-09', today).isNotStarted,
+    ).toBe(false);
+    expect(
+      withStatus(emi({ startCycle: '2026-11' }), '2026-12', today).isNotStarted,
+    ).toBe(false);
+  });
+
+  it('treats a null startCycle as already running', () => {
+    expect(
+      withStatus(emi({ startCycle: null }), '2026-09', today).isNotStarted,
+    ).toBe(false);
+  });
+
+  it('never reads as overdue before it starts', () => {
+    // Due on the 5th, viewed on the 22nd — would be 17 days overdue if the
+    // start cycle were ignored.
+    const row = withStatus(
+      emi({ startCycle: '2026-11', dueDay: 5 }),
+      '2026-09',
+      today,
+    );
+    expect(row.daysUntilDue).toBeNull();
+    expect(row.dueDate).toBeNull();
+  });
+
+  it('counts the payoff from the start cycle, not the viewed month', () => {
+    // 12 instalments starting Nov 2026 -> Nov 2026 + 11 = Oct 2027.
+    const row = withStatus(
+      emi({
+        startCycle: '2026-11',
+        installmentsPaid: 0,
+        installmentsTotal: 12,
+      }),
+      '2026-09',
+      today,
+    );
+    expect(row.payoffLabel).toBe('Ends Oct 2027');
+  });
+
+  it('excludes upcoming bills from the month total but not from what is owed', () => {
+    const rows = [
+      // Due on the 25th, viewed on the 22nd — deliberately not overdue, so the
+      // overdueCount assertion below is only about the upcoming bill.
+      emi({ id: 'now', amount: 1000, dueDay: 25 }),
+      emi({
+        id: 'later',
+        amount: 2000,
+        // Due on the 1st: would look overdue on the 22nd if the start cycle
+        // were ignored.
+        dueDay: 1,
+        startCycle: '2026-11',
+        installmentsPaid: 0,
+        installmentsTotal: 10,
+      }),
+    ].map((row) => withStatus(row, '2026-09', today));
+
+    const summary = summarise(rows, '2026-09');
+    expect(summary.monthlyTotal).toBe(1000);
+    expect(summary.pendingTotal).toBe(1000);
+    expect(summary.activeCount).toBe(1);
+    expect(summary.upcomingCount).toBe(1);
+    expect(summary.overdueCount).toBe(0);
+    // Still owed overall: 1 x 1000 is open-ended (null), 10 x 2000 upcoming.
+    expect(summary.remainingPayout).toBe(20_000);
+  });
+
+  it('sorts upcoming bills below everything owed this month', () => {
+    const rows = [
+      emi({ id: 'upcoming', startCycle: '2026-11', dueDay: 1 }),
+      emi({ id: 'paid', dueDay: 2, lastPaidCycle: '2026-09' }),
+      emi({ id: 'due', dueDay: 20 }),
+    ].map((row) => withStatus(row, '2026-09', today));
+
+    expect(sortForDisplay(rows).map((row) => row.id)).toEqual([
+      'due',
+      'paid',
+      'upcoming',
+    ]);
   });
 });

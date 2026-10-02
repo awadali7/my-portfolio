@@ -74,19 +74,36 @@ const getProgressPercent = (emi: EmiProps): number | null => {
   return null;
 };
 
-/** Month the final instalment falls in, e.g. "Ends Aug 2027". */
+const formatMonth = (cycle: string): string => {
+  const { year, month } = parseCycle(cycle);
+  return new Date(year, month, 1).toLocaleDateString('en-IN', {
+    month: 'short',
+    year: 'numeric',
+  });
+};
+
+/** True when the bill has not begun as of the cycle being viewed. */
+export const isNotStartedIn = (emi: EmiProps, cycle: string): boolean =>
+  emi.startCycle != null && cycle < emi.startCycle;
+
+/**
+ * Month the final instalment falls in, e.g. "Ends Aug 2027".
+ *
+ * Counts from the first cycle that will actually be billed — for a bill
+ * starting later, that is its start cycle, not the month being viewed.
+ * Otherwise a loan starting in three months would show a payoff three months
+ * too early.
+ */
 const getPayoffLabel = (emi: EmiProps, cycle: string): string | null => {
   const remaining = getInstallmentsRemaining(emi);
   if (remaining == null) return null;
   if (remaining === 0) return 'Closed';
 
-  const { year, month } = parseCycle(cycle);
-  // The remaining count includes this cycle's payment, hence `remaining - 1`.
-  const end = new Date(year, month + remaining - 1, 1);
-  return `Ends ${end.toLocaleDateString('en-IN', {
-    month: 'short',
-    year: 'numeric',
-  })}`;
+  const firstBilled =
+    emi.startCycle && cycle < emi.startCycle ? emi.startCycle : cycle;
+  const { year, month } = parseCycle(firstBilled);
+  // The remaining count includes that cycle's payment, hence `remaining - 1`.
+  return `Ends ${formatMonth(toCycle(new Date(year, month + remaining - 1, 1)))}`;
 };
 
 export const withStatus = (
@@ -94,8 +111,9 @@ export const withStatus = (
   cycle: string,
   today: Date = new Date(),
 ): EmiWithStatusProps => {
-  const dueDate = getDueDate(emi, cycle);
   const remaining = getInstallmentsRemaining(emi);
+  const isNotStarted = isNotStartedIn(emi, cycle);
+  const dueDate = getDueDate(emi, cycle);
 
   return {
     ...emi,
@@ -104,8 +122,16 @@ export const withStatus = (
     installmentsRemaining: remaining,
     isPaidThisCycle: emi.lastPaidCycle === cycle,
     isClosed: remaining === 0,
-    dueDate: dueDate ? dueDate.toISOString() : null,
-    daysUntilDue: dueDate ? daysUntil(dueDate, today) : null,
+    isNotStarted,
+    startLabel:
+      isNotStarted && emi.startCycle
+        ? `Starts ${formatMonth(emi.startCycle)}`
+        : null,
+    // A bill that has not started is not due in this cycle, so it must not
+    // read as "overdue" — clearing the date is what keeps it out of the
+    // overdue count and the amber/red styling.
+    dueDate: isNotStarted || !dueDate ? null : dueDate.toISOString(),
+    daysUntilDue: isNotStarted || !dueDate ? null : daysUntil(dueDate, today),
     payoffLabel: getPayoffLabel(emi, cycle),
     remainingPayout: remaining == null ? null : remaining * emi.amount,
   };
@@ -119,6 +145,8 @@ export const sortForDisplay = (
   emis: EmiWithStatusProps[],
 ): EmiWithStatusProps[] =>
   [...emis].sort((a, b) => {
+    // Nothing owed this month sinks: not-yet-started last of all, then paid.
+    if (a.isNotStarted !== b.isNotStarted) return a.isNotStarted ? 1 : -1;
     if (a.isPaidThisCycle !== b.isPaidThisCycle) {
       return a.isPaidThisCycle ? 1 : -1;
     }
@@ -132,7 +160,10 @@ export const summarise = (
   emis: EmiWithStatusProps[],
   cycle: string,
 ): EmiSummaryProps => {
-  const active = emis.filter((emi) => !emi.archived && !emi.isClosed);
+  const live = emis.filter((emi) => !emi.archived && !emi.isClosed);
+  // Billed in THIS cycle: what the month's totals are about. A bill starting
+  // later is still owed overall, so it stays in remainingPayout below.
+  const active = live.filter((emi) => !emi.isNotStarted);
   const paid = active.filter((emi) => emi.isPaidThisCycle);
 
   return {
@@ -144,13 +175,14 @@ export const summarise = (
       .reduce((sum, emi) => sum + emi.amount, 0),
     activeCount: active.length,
     paidCount: paid.length,
+    upcomingCount: live.filter((emi) => emi.isNotStarted).length,
     overdueCount: active.filter(
       (emi) =>
         !emi.isPaidThisCycle &&
         emi.daysUntilDue != null &&
         emi.daysUntilDue < 0,
     ).length,
-    remainingPayout: active.reduce(
+    remainingPayout: live.reduce(
       (sum, emi) => sum + (emi.remainingPayout ?? 0),
       0,
     ),

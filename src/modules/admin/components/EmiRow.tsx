@@ -30,22 +30,26 @@ const EmiRow = ({
     emi.daysUntilDue >= 0 &&
     emi.daysUntilDue <= 3;
 
-  const dueTone = emi.isPaidThisCycle
-    ? 'text-emerald-600 dark:text-emerald-400'
-    : isOverdue
-      ? 'text-red-600 dark:text-red-400'
-      : isDueSoon
-        ? 'text-amber-600 dark:text-amber-400'
-        : 'text-neutral-500';
+  const dueTone = emi.isNotStarted
+    ? 'text-sky-600 dark:text-sky-400'
+    : emi.isPaidThisCycle
+      ? 'text-emerald-600 dark:text-emerald-400'
+      : isOverdue
+        ? 'text-red-600 dark:text-red-400'
+        : isDueSoon
+          ? 'text-amber-600 dark:text-amber-400'
+          : 'text-neutral-500';
 
   return (
     <div
       className={`rounded-xl border p-4 transition-colors ${
-        emi.isPaidThisCycle
-          ? 'border-neutral-200 opacity-70 dark:border-neutral-800'
-          : isOverdue
-            ? 'border-red-500/40'
-            : 'border-neutral-300 dark:border-neutral-800'
+        emi.isNotStarted
+          ? 'border-dashed border-neutral-300 opacity-80 dark:border-neutral-700'
+          : emi.isPaidThisCycle
+            ? 'border-neutral-200 opacity-70 dark:border-neutral-800'
+            : isOverdue
+              ? 'border-red-500/40'
+              : 'border-neutral-300 dark:border-neutral-800'
       } dark:bg-neutral-900/40`}
     >
       <div className='flex flex-wrap items-start justify-between gap-3'>
@@ -60,6 +64,11 @@ const EmiRow = ({
                 Closed
               </span>
             )}
+            {emi.isNotStarted && (
+              <span className='bg-sky-500/15 rounded-full px-2 py-0.5 text-[11px] text-sky-600 dark:text-sky-400'>
+                Upcoming
+              </span>
+            )}
           </div>
 
           <p className='mt-1 text-xs text-neutral-500'>
@@ -69,7 +78,11 @@ const EmiRow = ({
 
           <div className='mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs'>
             <span className={dueTone}>
-              {emi.isPaidThisCycle ? 'Paid this month' : formatDueLabel(emi)}
+              {emi.isNotStarted
+                ? emi.startLabel
+                : emi.isPaidThisCycle
+                  ? 'Paid this month'
+                  : formatDueLabel(emi)}
             </span>
             <span className='text-neutral-500'>{emi.progressLabel}</span>
             {emi.remainingPayout != null && emi.remainingPayout > 0 && (
@@ -100,8 +113,11 @@ const EmiRow = ({
         <button
           type='button'
           onClick={() => onTogglePaid(emi)}
-          disabled={isBusy}
-          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-50 ${
+          disabled={isBusy || emi.isNotStarted}
+          title={
+            emi.isNotStarted ? `Not billed until ${emi.startCycle}` : undefined
+          }
+          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
             emi.isPaidThisCycle
               ? 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700'
               : 'bg-emerald-600 text-white hover:bg-emerald-700'

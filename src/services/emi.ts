@@ -2,6 +2,7 @@ import type {
   AdminProfileProps,
   EmiProps,
   IncomeProps,
+  IncomeSourceProps,
 } from '@/common/types/emi';
 
 /**
@@ -114,12 +115,24 @@ export const markEmiUnpaid = (token: string, id: string, cycle?: string) =>
     body: cycle ? { cycle } : {},
   });
 
-export const getIncome = (token: string) =>
-  request<IncomeProps & { id: string }>('/income', { token });
+/** Permanent sources plus the one-offs recorded against `cycle`, with totals. */
+export const getIncome = (token: string, cycle?: string) =>
+  request<IncomeProps>(
+    cycle ? `/income?cycle=${encodeURIComponent(cycle)}` : '/income',
+    { token },
+  );
 
-export const updateIncome = (token: string, body: IncomeProps) =>
-  request<IncomeProps & { id: string }>('/income', {
-    method: 'PUT',
-    token,
-    body,
-  });
+export const createIncomeSource = (
+  token: string,
+  body: { label: string; amount: number; cycle: string | null },
+) => request<IncomeSourceProps>('/income', { method: 'POST', token, body });
+
+export const updateIncomeSource = (
+  token: string,
+  id: string,
+  body: { label: string; amount: number; cycle: string | null },
+) =>
+  request<IncomeSourceProps>(`/income/${id}`, { method: 'PUT', token, body });
+
+export const deleteIncomeSource = (token: string, id: string) =>
+  request<void>(`/income/${id}`, { method: 'DELETE', token });

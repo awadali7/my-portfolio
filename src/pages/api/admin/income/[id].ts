@@ -1,14 +1,10 @@
 import { methodNotAllowed, withAdmin } from '@/common/libs/admin-api';
-import { createIncomeSource, getIncome } from '@/services/emi';
+import { deleteIncomeSource, updateIncomeSource } from '@/services/emi';
 
 export default withAdmin(async (req, res, token) => {
-  if (req.method === 'GET') {
-    const cycle =
-      typeof req.query.cycle === 'string' ? req.query.cycle : undefined;
-    return res.status(200).json(await getIncome(token, cycle));
-  }
+  const id = req.query.id as string;
 
-  if (req.method === 'POST') {
+  if (req.method === 'PUT') {
     const { label, amount, cycle } = req.body ?? {};
     if (typeof label !== 'string' || !label.trim()) {
       return res.status(400).json({ message: 'Label is required' });
@@ -16,15 +12,19 @@ export default withAdmin(async (req, res, token) => {
     if (!Number.isInteger(amount) || amount < 0) {
       return res.status(400).json({ message: 'Amount must be whole rupees' });
     }
-    return res.status(201).json(
-      await createIncomeSource(token, {
+    return res.status(200).json(
+      await updateIncomeSource(token, id, {
         label: label.trim(),
         amount,
-        // '' or missing means permanent income, which the backend stores as null.
         cycle: typeof cycle === 'string' && cycle ? cycle : null,
       }),
     );
   }
 
-  return methodNotAllowed(res, ['GET', 'POST']);
+  if (req.method === 'DELETE') {
+    await deleteIncomeSource(token, id);
+    return res.status(204).end();
+  }
+
+  return methodNotAllowed(res, ['PUT', 'DELETE']);
 });

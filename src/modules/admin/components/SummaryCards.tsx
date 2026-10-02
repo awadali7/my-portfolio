@@ -14,7 +14,7 @@ type SummaryCardsProps = {
 };
 
 const SummaryCards = ({ summary, income }: SummaryCardsProps) => {
-  const totalIncome = income ? income.userSalary + income.spouseSalary : null;
+  const totalIncome = income ? income.total : null;
   // Negative means the month's obligations exceed what comes in — worth
   // showing plainly rather than hiding behind a percentage.
   const leftover =
@@ -24,7 +24,12 @@ const SummaryCards = ({ summary, income }: SummaryCardsProps) => {
     {
       label: 'Due this month',
       value: formatRupees(summary.monthlyTotal),
-      hint: `${summary.activeCount} active`,
+      // Upcoming ones are deliberately excluded from the total above, so say
+      // so rather than leaving the count looking wrong.
+      hint:
+        summary.upcomingCount > 0
+          ? `${summary.activeCount} active · ${summary.upcomingCount} upcoming`
+          : `${summary.activeCount} active`,
       icon: <FiLayers />,
       tone: 'text-neutral-900 dark:text-neutral-100',
     },

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   FiChevronLeft,
   FiChevronRight,
@@ -20,21 +20,24 @@ import type {
   EmiProps,
   EmiWithStatusProps,
   IncomeProps,
+  IncomeSourceProps,
 } from '@/common/types/emi';
 
 import EmiFormModal from './components/EmiFormModal';
 import EmiRow from './components/EmiRow';
+import IncomePanel from './components/IncomePanel';
 import SummaryCards from './components/SummaryCards';
 
 type EmiTrackerProps = {
   admin: AdminProfileProps;
   initialEmis: EmiProps[];
-  income: IncomeProps | null;
+  initialIncome: IncomeProps | null;
 };
 
-const EmiTracker = ({ admin, initialEmis, income }: EmiTrackerProps) => {
+const EmiTracker = ({ admin, initialEmis, initialIncome }: EmiTrackerProps) => {
   const router = useRouter();
   const [emis, setEmis] = useState<EmiProps[]>(initialEmis);
+  const [income, setIncome] = useState<IncomeProps | null>(initialIncome);
   const [cycle, setCycle] = useState(() => toCycle());
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -61,22 +64,86 @@ const EmiTracker = ({ admin, initialEmis, income }: EmiTrackerProps) => {
         : [...previous, updated],
     );
 
-  const call = async (url: string, init: RequestInit) => {
-    const response = await fetch(url, {
-      headers: { 'content-type': 'application/json' },
-      ...init,
-    });
-    if (response.status === 401) {
-      // Session expired mid-use — bounce to the login page rather than
-      // leaving the console in a half-broken state.
-      await router.replace('/admin/login');
-      throw new Error('Session expired');
+  const call = useCallback(
+    async (url: string, init: RequestInit) => {
+      const response = await fetch(url, {
+        headers: { 'content-type': 'application/json' },
+        ...init,
+      });
+      if (response.status === 401) {
+        // Session expired mid-use — bounce to the login page rather than
+        // leaving the console in a half-broken state.
+        await router.replace('/admin/login');
+        throw new Error('Session expired');
+      }
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.message || `Request failed (${response.status})`);
+      }
+      return response.status === 204 ? null : await response.json();
+    },
+    [router],
+  );
+
+  // Income is per-month, so switching the cycle has to refetch it. The initial
+  // month already came from the server, so this only fires on a real change.
+  useEffect(() => {
+    if (cycle === initialIncome?.cycle) {
+      setIncome(initialIncome);
+      return;
     }
-    if (!response.ok) {
-      const body = await response.json().catch(() => ({}));
-      throw new Error(body.message || `Request failed (${response.status})`);
+    let cancelled = false;
+    call(`/api/admin/income?cycle=${cycle}`, { method: 'GET' })
+      .then((data) => {
+        if (!cancelled) setIncome(data as IncomeProps);
+      })
+      .catch(() => {
+        if (!cancelled) setIncome(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [cycle, initialIncome, call]);
+
+  const refreshIncome = async () => {
+    setIncome(
+      (await call(`/api/admin/income?cycle=${cycle}`, {
+        method: 'GET',
+      })) as IncomeProps,
+    );
+  };
+
+  const handleAddIncome = async (values: {
+    label: string;
+    amount: number;
+    cycle: string | null;
+  }) => {
+    setBusyId('income');
+    try {
+      await call('/api/admin/income', {
+        method: 'POST',
+        body: JSON.stringify(values),
+      });
+      await refreshIncome();
+    } finally {
+      setBusyId(null);
     }
-    return response.status === 204 ? null : await response.json();
+  };
+
+  const handleDeleteIncome = async (source: IncomeSourceProps) => {
+    if (!window.confirm(`Remove "${source.label}"?`)) return;
+    setBusyId('income');
+    setError(null);
+    try {
+      await call(`/api/admin/income/${source.id}`, { method: 'DELETE' });
+      await refreshIncome();
+    } catch (deleteError) {
+      setError(
+        deleteError instanceof Error ? deleteError.message : 'Could not remove',
+      );
+    } finally {
+      setBusyId(null);
+    }
   };
 
   const handleTogglePaid = async (emi: EmiWithStatusProps) => {
@@ -192,6 +259,14 @@ const EmiTracker = ({ admin, initialEmis, income }: EmiTrackerProps) => {
       </div>
 
       <SummaryCards summary={summary} income={income} />
+
+      <IncomePanel
+        income={income}
+        cycle={cycle}
+        isBusy={busyId === 'income'}
+        onAdd={handleAddIncome}
+        onDelete={handleDeleteIncome}
+      />
 
       {error && (
         <p
