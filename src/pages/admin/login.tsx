@@ -4,12 +4,14 @@ import { NextSeo } from 'next-seo';
 import Container from '@/common/components/elements/Container';
 import { readAdminToken } from '@/common/libs/admin-session';
 import LoginForm from '@/modules/admin/components/LoginForm';
+import MyyeePwa from '@/modules/admin/components/MyyeePwa';
 import { getAdminProfile } from '@/services/emi';
 
 const AdminLoginPage: NextPage = () => (
   <>
     <NextSeo title='Admin' noindex nofollow />
-    <Container>
+    <MyyeePwa />
+    <Container className='mt-0'>
       <LoginForm />
     </Container>
   </>

@@ -3,11 +3,14 @@ import { FormEvent, useEffect, useState } from 'react';
 import ModalWrapper from '@/common/components/elements/ModalWrapper';
 import { EMI_TYPE_LABELS } from '@/common/helpers/emi';
 import type { EmiProps, EmiType } from '@/common/types/emi';
+import type { CategoryProps } from '@/common/types/money';
 
 type EmiFormModalProps = {
   isOpen: boolean;
   /** null = creating a new one. */
   emi: EmiProps | null;
+  /** Managed EMI categories, edited under Settings. */
+  categories: CategoryProps[];
   onClose: () => void;
   onSubmit: (payload: Partial<EmiProps>, id: string | null) => Promise<void>;
 };
@@ -66,6 +69,7 @@ const toNullableInt = (value: string): number | null => {
 const EmiFormModal = ({
   isOpen,
   emi,
+  categories,
   onClose,
   onSubmit,
 }: EmiFormModalProps) => {
@@ -169,10 +173,18 @@ const EmiFormModal = ({
             <span className={labelText}>Category</span>
             <input
               className={inputClass}
+              list='emi-categories'
               value={form.category}
               onChange={(event) => update('category', event.target.value)}
               placeholder='Appliance EMI'
             />
+            {/* Suggests the managed list without forcing it — a new category
+                can still be typed here and added under Settings later. */}
+            <datalist id='emi-categories'>
+              {categories.map((category) => (
+                <option key={category.id} value={category.name} />
+              ))}
+            </datalist>
           </label>
 
           <label className={labelClass}>

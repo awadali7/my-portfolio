@@ -9,39 +9,33 @@ import type {
   EmiProps,
   IncomeProps,
 } from '@/common/types/emi';
-import type {
-  BorrowingSummaryProps,
-  ExpenseMonthProps,
-} from '@/common/types/money';
-import DashboardTab from '@/modules/admin/DashboardTab';
-import { getBorrowings, getEmis, getExpenses, getIncome } from '@/services/emi';
+import type { CategoryProps } from '@/common/types/money';
+import EmiTab from '@/modules/admin/EmiTab';
+import { getCategories, getEmis, getIncome } from '@/services/emi';
 
 type Props = {
   admin: AdminProfileProps;
   emis: EmiProps[];
   income: IncomeProps | null;
-  expenses: ExpenseMonthProps;
-  borrowings: BorrowingSummaryProps;
+  categories: CategoryProps[];
   cycle: string;
 };
 
-const AdminDashboardPage: NextPage<Props> = ({
+const AdminEmiPage: NextPage<Props> = ({
   admin,
   emis,
   income,
-  expenses,
-  borrowings,
+  categories,
   cycle,
 }) => (
   <>
-    <NextSeo title='Money Manage' noindex nofollow />
+    <NextSeo title='EMI — Money Manage' noindex nofollow />
     <Container className='mt-0'>
-      <DashboardTab
+      <EmiTab
         admin={admin}
-        emis={emis}
+        initialEmis={emis}
         income={income}
-        expenses={expenses}
-        borrowings={borrowings}
+        categories={categories}
         cycle={cycle}
       />
     </Container>
@@ -50,14 +44,12 @@ const AdminDashboardPage: NextPage<Props> = ({
 
 export const getServerSideProps = withAdminPage(async (token, _admin, ctx) => {
   const cycle = cycleFromQuery(ctx.query.cycle);
-  const [emis, expenses, borrowings] = await Promise.all([
+  const [emis, categories] = await Promise.all([
     getEmis(token),
-    getExpenses(token, cycle),
-    getBorrowings(token),
+    getCategories(token, 'emi'),
   ]);
-  // Income is secondary here — a failure shouldn't cost the whole dashboard.
   const income = await getIncome(token, cycle).catch(() => null);
-  return { emis, income, expenses, borrowings, cycle };
+  return { emis, income, categories, cycle };
 });
 
-export default AdminDashboardPage;
+export default AdminEmiPage;

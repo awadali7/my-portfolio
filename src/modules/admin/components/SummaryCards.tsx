@@ -8,6 +8,8 @@ import {
 import { formatRupees } from '@/common/helpers/emi';
 import type { EmiSummaryProps, IncomeProps } from '@/common/types/emi';
 
+import CardPattern from './CardPattern';
+
 type SummaryCardsProps = {
   summary: EmiSummaryProps;
   income: IncomeProps | null;
@@ -73,8 +75,9 @@ const SummaryCards = ({ summary, income }: SummaryCardsProps) => {
       {cards.map((card) => (
         <div
           key={card.label}
-          className='rounded-xl border border-neutral-300 p-4 dark:border-neutral-800 dark:bg-neutral-900/40'
+          className='relative overflow-hidden rounded-xl border border-neutral-300 p-4 dark:border-neutral-800 dark:bg-neutral-900/40'
         >
+          <CardPattern />
           <div className='flex items-center gap-1.5 text-xs text-neutral-600 dark:text-neutral-400'>
             <span className={card.tone}>{card.icon}</span>
             {card.label}

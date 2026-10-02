@@ -5,8 +5,8 @@ import { ReactNode } from 'react';
 import { useWindowSize } from 'usehooks-ts';
 
 import useHasMounted from '@/common/hooks/useHasMounted';
-// import ChatButton from '@/modules/chat/components/ChatButton';
 
+// import ChatButton from '@/modules/chat/components/ChatButton';
 import HeaderSidebar from './header/HeaderSidebar';
 import HeaderTop from './header/HeaderTop';
 import NowPlayingBar from '../elements/NowPlayingBar';
@@ -30,14 +30,32 @@ const Layout = ({ children }: LayoutProps) => {
   const router = useRouter();
   const pageName = router.pathname.split('/')[1];
 
+  // The admin console is a separate product from the portfolio: it brings its
+  // own header, navigation and sign-out, so the site chrome would only
+  // duplicate them (two hamburger menus stacked) and leak portfolio UI into a
+  // private tool.
+  const isBareLayout = pageName === 'admin';
+
   const isFullPageHeader =
-    pageName === 'admin' ||
     pageName === 'playground' ||
     pageName === 'blog' ||
     router.pathname.startsWith('/blog/') ||
     router.pathname.startsWith('/learn/');
 
   // const isShowChatButton = pageName !== 'guestbook';
+
+  if (isBareLayout) {
+    return (
+      <div
+        className={clsx(
+          'mx-auto max-w-6xl',
+          isDarkTheme ? 'dark:text-darkText' : '',
+        )}
+      >
+        <main className='transition-all duration-300'>{children}</main>
+      </div>
+    );
+  }
 
   return (
     <>

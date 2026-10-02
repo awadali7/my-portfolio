@@ -1,23 +1,31 @@
 import styled from '@emotion/styled';
 import { useTheme } from 'next-themes';
 
+import useHasMounted from '@/common/hooks/useHasMounted';
+
 const ThemeToggleButton = () => {
   const { resolvedTheme, setTheme } = useTheme();
+  const hasMounted = useHasMounted();
 
-  const toggleTheme = () =>
-    setTheme(resolvedTheme === 'light' ? 'dark' : 'light');
+  // The server has no way to know the visitor's theme, so `resolvedTheme` is
+  // undefined there and resolved on the client. Reading it during the first
+  // render made `checked` and `data-umami-event` differ between the two, which
+  // failed hydration and forced React to re-render the whole root on every
+  // page. Treat it as "not dark" until mounted so both passes agree, then let
+  // the real value take over.
+  const isDark = hasMounted && resolvedTheme === 'dark';
+
+  const toggleTheme = () => setTheme(isDark ? 'light' : 'dark');
 
   return (
     <StyledToggle className='flex'>
       <input
-        checked={resolvedTheme === 'dark'}
+        checked={isDark}
         type='checkbox'
         className='mode-toggle'
         onChange={toggleTheme}
         id='switch-theme'
-        data-umami-event={`Switch to ${
-          resolvedTheme === 'light' ? 'Dark' : 'Light'
-        } Mode`}
+        data-umami-event={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
       />
       <label className='mode-toggle-label' htmlFor='switch-theme'>
         <svg

@@ -4,6 +4,8 @@ import { FiPlus, FiTrash2, FiX } from 'react-icons/fi';
 import { formatCycle, formatRupees } from '@/common/helpers/emi';
 import type { IncomeProps, IncomeSourceProps } from '@/common/types/emi';
 
+import CardPattern from './CardPattern';
+
 type IncomePanelProps = {
   income: IncomeProps | null;
   cycle: string;
@@ -89,7 +91,8 @@ const IncomePanel = ({
   );
 
   return (
-    <div className='rounded-xl border border-neutral-300 p-4 dark:border-neutral-800 dark:bg-neutral-900/40'>
+    <div className='relative overflow-hidden rounded-xl border border-neutral-300 p-4 dark:border-neutral-800 dark:bg-neutral-900/40'>
+      <CardPattern />
       <div className='flex items-center justify-between gap-3'>
         <h2 className='text-sm font-medium'>Income</h2>
         <span className='text-sm font-medium tabular-nums'>
