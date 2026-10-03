@@ -15,6 +15,7 @@ const MenuItem = ({
   className = '',
   children,
   hideIcon = false,
+  isActive,
 }: MenuItemProps) => {
   const { hideNavbar } = useContext(MenuContext);
   const [isHovered, setIsHovered] = useState(false);
@@ -22,8 +23,15 @@ const MenuItem = ({
   const isHashLink = href === '#';
   const router = useRouter();
 
+  // A section stays lit on its sub-pages (/blog/[slug] lights Blog). Home is
+  // excluded, or "/" would match every page.
+  const isActiveRoute =
+    isActive ??
+    (router.pathname === href ||
+      (href !== '/' && router.pathname.startsWith(`${href}/`)));
+
   const activeClasses = `flex items-center gap-2 py-2 pl-4 pr-2.5 text-neutral-700 dark:text-neutral-400 hover:text-neutral-900 hover:dark:text-neutral-300 rounded-lg group ${
-    router.pathname === href
+    isActiveRoute
       ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:!text-neutral-200'
       : 'hover:dark:lg:bg-neutral-800 hover:dark:!text-neutral-300 hover:lg:bg-neutral-200 hover:lg:rounded-lg lg:transition-all lg:duration-300'
   }`;
@@ -47,8 +55,6 @@ const MenuItem = ({
     onMouseEnter: handleMouseEnter,
     onMouseLeave: handleMouseLeave,
   };
-
-  const isActiveRoute = router.pathname === href;
 
   const itemComponent = () => {
     return (

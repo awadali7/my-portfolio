@@ -52,3 +52,8 @@ a {
 ::-webkit-scrollbar-thumb {
   @apply rounded-[3px] border-2 border-neutral-300 bg-neutral-600 dark:bg-neutral-400;
 }
+
+/* Blog table of contents on phones: the chevron replaces the default marker. */
+.toc-summary::-webkit-details-marker {
+  display: none;
+}

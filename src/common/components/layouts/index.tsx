@@ -36,11 +36,9 @@ const Layout = ({ children }: LayoutProps) => {
   // private tool.
   const isBareLayout = pageName === 'admin';
 
+  // Blog pages keep the sidebar, like Home, Projects and About.
   const isFullPageHeader =
-    pageName === 'playground' ||
-    pageName === 'blog' ||
-    router.pathname.startsWith('/blog/') ||
-    router.pathname.startsWith('/learn/');
+    pageName === 'playground' || router.pathname.startsWith('/learn/');
 
   // const isShowChatButton = pageName !== 'guestbook';
 

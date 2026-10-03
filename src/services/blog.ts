@@ -1,75 +1,141 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import type {
+  AdminBlogCategoryProps,
+  AdminBlogPostProps,
+  AdminBlogPostRowProps,
+  BlogCategoryInputProps,
+  BlogCategoryProps,
+  BlogFeedItemProps,
+  BlogImageUploadProps,
+  BlogPostInputProps,
+  BlogPostListProps,
+  BlogPostProps,
+  BlogSitemapProps,
+} from '@/common/types/blog';
 
-import { BlogItemProps } from '@/common/types/blog';
+import { request, sendRaw, toQueryString } from './backend';
 
-type BlogParamsProps = {
+/*
+ * awad-backend's blog endpoints. Public reads (/blog/*) send no credentials;
+ * admin calls (/admin/blog/*) need the bearer token from the session cookie.
+ */
+
+export const BLOG_PAGE_SIZE = 6;
+
+export type BlogPostsQuery = {
   page?: number;
-  per_page?: number;
-  categories?: number | undefined;
-  search?: string;
+  pageSize?: number;
+  category?: string;
+  tag?: string;
+  q?: string;
 };
 
-interface BlogDetailResponseProps {
-  status: number;
-  data: any;
-}
+/* ------------------------------------------------------------------ public */
 
-const BLOG_URL = process.env.BLOG_API_URL as string;
-
-const handleAxiosError = (
-  error: AxiosError<any>,
-): { status: number; data: any } => {
-  if (error?.response) {
-    return { status: error?.response?.status, data: error?.response?.data };
-  } else {
-    return { status: 500, data: { message: 'Internal Server Error' } };
-  }
-};
-
-const extractData = (
-  response: AxiosResponse,
-): {
-  posts: BlogItemProps[];
-  page: number;
-  per_page: number;
-  total_pages: number;
-  total_posts: number;
-  categories: number;
-} => {
-  const { headers, data } = response;
-  return {
-    posts: data,
-    page: response?.config?.params?.page || 1,
-    per_page: response?.config?.params?.per_page || 6,
-    total_pages: Number(headers['x-wp-totalpages']) || 0,
-    total_posts: Number(headers['x-wp-total']) || 0,
-    categories: response?.config?.params?.categories,
-  };
-};
-
-export const getBlogList = async ({
+export const getBlogPosts = ({
   page = 1,
-  per_page = 6,
-  categories,
-  search,
-}: BlogParamsProps): Promise<{ status: number; data: any }> => {
-  try {
-    const params = { page, per_page, categories, search };
-    const response = await axios.get(`${BLOG_URL}posts`, { params });
-    return { status: response?.status, data: extractData(response) };
-  } catch (error) {
-    return handleAxiosError(error as AxiosError<any>);
-  }
-};
+  pageSize = BLOG_PAGE_SIZE,
+  category,
+  tag,
+  q,
+}: BlogPostsQuery = {}) =>
+  request<BlogPostListProps>(
+    `/blog/posts${toQueryString({ page, pageSize, category, tag, q })}`,
+  );
 
-export const getBlogDetail = async (
-  id: number,
-): Promise<BlogDetailResponseProps> => {
-  try {
-    const response = await axios.get(`${BLOG_URL}posts/${id}`);
-    return { status: response?.status, data: response?.data };
-  } catch (error) {
-    return handleAxiosError(error as AxiosError<any>);
-  }
-};
+export const getBlogPost = (slug: string) =>
+  request<BlogPostProps>(`/blog/posts/${encodeURIComponent(slug)}`);
+
+export const getBlogCategories = () =>
+  request<BlogCategoryProps[]>('/blog/categories');
+
+export const getBlogSitemap = () => request<BlogSitemapProps>('/blog/sitemap');
+
+/** The newest published posts with their bodies, for the RSS feed. */
+export const getBlogFeed = () => request<BlogFeedItemProps[]>('/blog/feed');
+
+/* ------------------------------------------------------------------- admin */
+
+export const getAdminBlogPosts = (token: string) =>
+  request<AdminBlogPostRowProps[]>('/admin/blog/posts', { token });
+
+export const getAdminBlogPost = (token: string, id: string) =>
+  request<AdminBlogPostProps>(`/admin/blog/posts/${encodeURIComponent(id)}`, {
+    token,
+  });
+
+export const createBlogPost = (token: string, body: BlogPostInputProps) =>
+  request<AdminBlogPostProps>('/admin/blog/posts', {
+    method: 'POST',
+    token,
+    body,
+  });
+
+export const updateBlogPost = (
+  token: string,
+  id: string,
+  body: BlogPostInputProps,
+) =>
+  request<AdminBlogPostProps>(`/admin/blog/posts/${encodeURIComponent(id)}`, {
+    method: 'PUT',
+    token,
+    body,
+  });
+
+export const publishBlogPost = (token: string, id: string) =>
+  request<AdminBlogPostProps>(
+    `/admin/blog/posts/${encodeURIComponent(id)}/publish`,
+    { method: 'POST', token },
+  );
+
+export const unpublishBlogPost = (token: string, id: string) =>
+  request<AdminBlogPostProps>(
+    `/admin/blog/posts/${encodeURIComponent(id)}/unpublish`,
+    { method: 'POST', token },
+  );
+
+export const deleteBlogPost = (token: string, id: string) =>
+  request<void>(`/admin/blog/posts/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+    token,
+  });
+
+export const getAdminBlogCategories = (token: string) =>
+  request<AdminBlogCategoryProps[]>('/admin/blog/categories', { token });
+
+export const createBlogCategory = (
+  token: string,
+  body: BlogCategoryInputProps,
+) =>
+  request<AdminBlogCategoryProps>('/admin/blog/categories', {
+    method: 'POST',
+    token,
+    body,
+  });
+
+export const updateBlogCategory = (
+  token: string,
+  id: string,
+  body: BlogCategoryInputProps,
+) =>
+  request<AdminBlogCategoryProps>(
+    `/admin/blog/categories/${encodeURIComponent(id)}`,
+    { method: 'PUT', token, body },
+  );
+
+export const deleteBlogCategory = (token: string, id: string) =>
+  request<void>(`/admin/blog/categories/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+    token,
+  });
+
+/** Forwards a multipart image upload, boundary and all, to the backend. */
+export const uploadBlogImage = (
+  token: string,
+  body: Buffer,
+  contentType: string,
+) =>
+  sendRaw<BlogImageUploadProps>('/admin/blog/uploads', {
+    token,
+    body,
+    contentType,
+  });

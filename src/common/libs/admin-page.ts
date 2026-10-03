@@ -10,6 +10,17 @@ const TO_LOGIN = {
 } as const;
 
 /**
+ * Thrown by a loader when the thing the page edits doesn't exist, so the page
+ * answers 404 instead of sending a signed-in operator back to the login page.
+ */
+export class AdminPageNotFound extends Error {
+  constructor() {
+    super('Not found');
+    this.name = 'AdminPageNotFound';
+  }
+}
+
+/**
  * Wraps a console page's getServerSideProps: proves the session before the page
  * renders, and hands the loader the verified admin plus the bearer token.
  *
@@ -33,7 +44,8 @@ export function withAdminPage<P extends Record<string, unknown>>(
       const admin = await getAdminProfile(token);
       const props = await load(token, admin, ctx);
       return { props: { ...props, admin } };
-    } catch {
+    } catch (error) {
+      if (error instanceof AdminPageNotFound) return { notFound: true };
       // An expired token and a backend that is down are indistinguishable from
       // here; sending the operator to the login page is right either way.
       return TO_LOGIN;

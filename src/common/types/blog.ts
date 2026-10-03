@@ -1,158 +1,169 @@
-export type UserProps = {
+/*
+ * Shapes returned by awad-backend's blog endpoints. Dates arrive as ISO strings.
+ * Public types never carry draft state or authorship; admin types do.
+ */
+
+export type BlogCategoryRefProps = {
   name: string;
-  username: string;
-  twitter_username: string;
-  github_username: string;
-  user_id: number;
-  website_url: string;
-  profile_image: string;
-  profile_image_90: string;
+  slug: string;
 };
 
-export type BlogItemProps = {
-  id: number;
-  date: string;
-  modified: string;
+/** What a post card needs. */
+export type BlogPostSummaryProps = {
+  id: string;
   slug: string;
-  status: string;
-  link: string;
-  title: {
-    rendered: string;
-  };
-  content: {
-    rendered: string;
-    markdown: string;
-    protected: boolean;
-  };
-  excerpt: {
-    rendered: string;
-    protected: boolean;
-  };
-  author: number;
-  featured_media: number;
-  comment_status: string;
-  ping_status: string;
-  sticky: boolean;
-  template: string;
-  format: string;
-  meta: {
-    footnotes: string;
-  };
-  categories: number[];
-  tags: number[];
-  tags_list: {
-    term_id: number;
-    name: string;
+  title: string;
+  excerpt: string;
+  coverImageUrl: string | null;
+  coverImageAlt: string | null;
+  tags: string[];
+  readingMinutes: number;
+  publishedAt: string;
+  contentUpdatedAt: string | null;
+  category: BlogCategoryRefProps | null;
+};
+
+/** A published post with its markdown body and three posts to read next. */
+export type BlogPostProps = BlogPostSummaryProps & {
+  content: string;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  canonicalUrl: string | null;
+  related: BlogPostSummaryProps[];
+};
+
+/** A feed entry: the card fields plus the markdown body. */
+export type BlogFeedItemProps = BlogPostSummaryProps & { content: string };
+
+export type BlogPostListProps = {
+  items: BlogPostSummaryProps[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+};
+
+/** A category that has at least one published post. */
+export type BlogCategoryProps = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  postCount: number;
+};
+
+export type BlogSitemapProps = {
+  posts: {
     slug: string;
-    term_group: number;
-    term_taxonomy_id: number;
-    taxonomy: string;
-    description: string;
-    parent: number;
-    count: number;
-    filter: string;
+    title: string;
+    coverImageUrl: string | null;
+    coverImageAlt: string | null;
+    lastModified: string | null;
   }[];
-  amp_enabled: boolean;
-  featured_image_url: string;
-  total_views_count: number;
+  categories: { slug: string; lastModified: string }[];
 };
 
-export type BlogDetailProps = {
-  id: number;
-  date: string;
-  date_gmt: string;
-  modified: string;
-  modified_gmt: string;
+/** A heading found in a post body, in document order. */
+export type BlogHeadingProps = {
+  depth: number;
+  text: string;
+  id: string;
+  /** 1-based source line, used to give the rendered heading the same id. */
+  line: number;
+};
+
+/* ------------------------------------------------------------------- admin */
+
+export type BlogPostStatus = 'draft' | 'published';
+
+export type AdminBlogCategoryRefProps = {
+  id: string;
+  name: string;
   slug: string;
-  status: string;
+};
+
+/** A row in the admin posts list: no body. */
+export type AdminBlogPostRowProps = {
+  id: string;
+  slug: string;
+  title: string;
+  status: BlogPostStatus;
+  tags: string[];
+  readingMinutes: number;
+  publishedAt: string | null;
+  contentUpdatedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  category: AdminBlogCategoryRefProps | null;
+  author: { name: string | null; username: string } | null;
+};
+
+/** Everything the editor needs, drafts included. */
+export type AdminBlogPostProps = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  coverImageUrl: string | null;
+  coverImageAlt: string | null;
+  tags: string[];
+  status: BlogPostStatus;
+  readingMinutes: number;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  canonicalUrl: string | null;
+  publishedAt: string | null;
+  contentUpdatedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  categoryId: string | null;
+  authorId: string | null;
+  category: AdminBlogCategoryRefProps | null;
+};
+
+/** What the backend returns for an uploaded image. */
+export type BlogImageUploadProps = {
+  /** Full address to use as a cover or in a markdown image. */
+  url: string;
+  path: string;
+  size: number;
   type: string;
-  link: string;
-  title: {
-    rendered: string;
-  };
-  content: {
-    rendered: string;
-    markdown: string;
-    protected: boolean;
-  };
-  excerpt: {
-    rendered: string;
-    protected: boolean;
-  };
-  author: number;
-  featured_media: number;
-  comment_status: string;
-  ping_status: string;
-  sticky: boolean;
-  template: string;
-  format: string;
-  meta: {
-    footnotes: string;
-  };
-  categories: number[];
-  tags: number[];
-  tags_list: {
-    term_id: number;
-    name: string;
-    slug: string;
-    term_group: number;
-    term_taxonomy_id: number;
-    taxonomy: string;
-    description: string;
-    parent: number;
-    count: number;
-    filter: string;
-  }[];
-  amp_enabled: boolean;
-  featured_image_url: string;
-  guid: {
-    rendered: string;
-  };
-  replies: {
-    embeddable: true;
-    href: string;
-  };
-  version_history: {
-    count: number;
-    href: string;
-  };
-  predecessor_version: {
-    id: number;
-    href: string;
-  };
-  wp_featuredmedia: {
-    embeddable: true;
-    href: string;
-  };
-  wp_attachment: {
-    href: string;
-  };
-  wp_term: {
-    taxonomy: string;
-    embeddable: true;
-    href: string;
-  }[];
-  curies: {
-    name: string;
-    href: string;
-    templated: true;
-  }[];
-  total_views_count: number;
 };
 
-export type BlogProps = {
-  blogs: BlogItemProps[];
+/** The exact body the backend accepts for creating or saving a post. */
+export type BlogPostInputProps = {
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  coverImageUrl: string | null;
+  coverImageAlt: string | null;
+  categoryId: string | null;
+  tags: string[];
+  seoTitle: string | null;
+  seoDescription: string | null;
+  canonicalUrl: string | null;
 };
 
-export type BlogFeaturedProps = {
-  data: BlogItemProps[];
+export type AdminBlogCategoryProps = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  postCount: number;
+  createdAt: string;
+  updatedAt: string;
 };
 
-export type CommentItemProps = {
-  type_of: string;
-  id_code: string;
-  created_at: string;
-  body_html: string;
-  user: UserProps;
-  children: Comment[];
+export type BlogCategoryInputProps = {
+  name: string;
+  slug?: string | null;
+  description: string | null;
 };
+
+/** The tabs across the top of the console's Blog section. */
+export const BLOG_TABS = [
+  { key: 'posts', label: 'Posts', href: '/admin/blog' },
+  { key: 'categories', label: 'Categories', href: '/admin/blog/categories' },
+] as const;

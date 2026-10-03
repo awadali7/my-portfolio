@@ -1,6 +1,9 @@
 User-agent: *
 Allow: /
+# Blog social cards: X and LinkedIn won't fetch an og:image that is blocked.
+Allow: /api/og
 Disallow: /api/
 Disallow: /admin
 
 Sitemap: https://www.awadali.com/sitemap.xml
+Sitemap: https://www.awadali.com/sitemap-blog.xml

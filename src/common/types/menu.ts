@@ -12,4 +12,6 @@ export type MenuItemProps = {
   eventName?: string;
   hideIcon?: boolean;
   type?: string;
+  /** Overrides the address match, e.g. for the admin console's own rules. */
+  isActive?: boolean;
 };

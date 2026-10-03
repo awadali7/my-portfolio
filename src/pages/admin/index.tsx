@@ -1,7 +1,6 @@
 import { NextPage } from 'next';
 import { NextSeo } from 'next-seo';
 
-import Container from '@/common/components/elements/Container';
 import { cycleFromQuery } from '@/common/helpers/money';
 import { withAdminPage } from '@/common/libs/admin-page';
 import type {
@@ -35,16 +34,15 @@ const AdminDashboardPage: NextPage<Props> = ({
 }) => (
   <>
     <NextSeo title='Money Manage' noindex nofollow />
-    <Container className='mt-0'>
-      <DashboardTab
-        admin={admin}
-        emis={emis}
-        income={income}
-        expenses={expenses}
-        borrowings={borrowings}
-        cycle={cycle}
-      />
-    </Container>
+
+    <DashboardTab
+      admin={admin}
+      emis={emis}
+      income={income}
+      expenses={expenses}
+      borrowings={borrowings}
+      cycle={cycle}
+    />
   </>
 );
 

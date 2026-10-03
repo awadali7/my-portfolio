@@ -24,6 +24,8 @@ export const buildSeo = ({
   image = DEFAULT_OG_IMAGE,
   type = 'website',
   article,
+  canonical,
+  extraMetaTags = [],
 }: BuildSeoProps): NextSeoProps => {
   const url = absoluteUrl(path);
   const imageUrl = absoluteUrl(image.url);
@@ -32,7 +34,7 @@ export const buildSeo = ({
   return {
     title,
     description,
-    canonical: noindex ? undefined : url,
+    canonical: noindex ? undefined : canonical ?? url,
     noindex,
     openGraph: {
       url,
@@ -51,6 +53,7 @@ export const buildSeo = ({
       { name: 'twitter:description', content: description },
       { name: 'twitter:image', content: imageUrl },
       { name: 'twitter:image:alt', content: imageAlt },
+      ...extraMetaTags,
     ],
   };
 };

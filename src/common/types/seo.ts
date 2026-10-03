@@ -19,6 +19,11 @@ export interface BuildSeoProps extends PageSeoProps {
     publishedTime?: string;
     modifiedTime?: string;
     authors?: string[];
+    section?: string;
     tags?: string[];
   };
+  /** Points search engines elsewhere, e.g. at a post's original home. */
+  canonical?: string;
+  /** Extra <meta name> tags, e.g. the reading-time labels X and Slack show. */
+  extraMetaTags?: { name: string; content: string }[];
 }

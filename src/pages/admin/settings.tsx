@@ -1,7 +1,6 @@
 import { NextPage } from 'next';
 import { NextSeo } from 'next-seo';
 
-import Container from '@/common/components/elements/Container';
 import { withAdminPage } from '@/common/libs/admin-page';
 import type { AdminProfileProps } from '@/common/types/emi';
 import type { CategoryProps } from '@/common/types/money';
@@ -16,9 +15,8 @@ type Props = {
 const AdminSettingsPage: NextPage<Props> = ({ admin, categories }) => (
   <>
     <NextSeo title='Settings — Money Manage' noindex nofollow />
-    <Container className='mt-0'>
-      <SettingsTab admin={admin} initialCategories={categories} />
-    </Container>
+
+    <SettingsTab admin={admin} initialCategories={categories} />
   </>
 );
 
